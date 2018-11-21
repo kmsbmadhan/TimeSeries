@@ -1,0 +1,56 @@
+# time series analysis
+# please load the following packages
+install.packages('timeSeries')
+install.packages('timeDate')
+install.packages('tseries')
+install.packages('forecast')
+library(timeSeries)
+library(timeDate)
+library(tseries)
+library(forecast)
+
+
+#Example 2
+setwd("E:/SEM2/MachineLearning/TS")
+quake <- read.csv("earthquake.csv")
+head(quake)
+dif
+plot(quake)
+
+quake <- as.ts(quake$Quakes)
+class(quake)
+adf.test(quake, alternative = "stationary")
+
+train <- quake[1:80]
+test <- quake[81:100]
+
+manual.fit<-arima(train, c(1,1,2))  # fitted model
+summary(manual.fit)
+
+manual.fcast <- forecast(manual.fit, h=20) # prediction for 10 step ahead
+plot(manual.fcast)
+length(manual.fcast)
+##########################automatically fitting model to the seasonal data
+auto.fit<-auto.arima(quake, seasonal=F)  # automatic way to find the optimized model
+tsdisplay(residuals(auto.fit), lag.max=45)
+summary(auto.fit)
+###### predict 10 step ahead future data
+auto.fcast <- forecast(auto.fit, h=10)
+
+
+plot(auto.fcast)
+
+#Example 3
+
+birth <- as.vector(read.table("https://robjhyndman.com/tsdldata/data/nybirths.dat",
+                              header=FALSE))
+class(birth)
+birth <- as.ts(birth)
+
+##########################automatically fitting model to the seasonal data
+auto.fit<-auto.arima(birth, seasonal=T)  # automatic way to find the optimized model
+tsdisplay(residuals(auto.fit), lag.max=45)
+summary(auto.fit)
+###### predict 10 step ahead future data
+auto.fcast <- forecast(auto.fit, h=10)
+plot(auto.fcast)
